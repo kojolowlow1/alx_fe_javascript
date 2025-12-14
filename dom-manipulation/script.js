@@ -176,14 +176,18 @@ async function syncQuotes() {
     }
   });
 
-  if (newData) {
-    saveQuotes();         // Update localStorage
-    populateCategories(); // Refresh category dropdown
-    filterQuotes();       // Show filtered quote
-    const notif = document.getElementById("syncNotification");
-    notif.style.display = "block"; // Show notification
-    setTimeout(() => notif.style.display = "none", 3000);
-  }
+ if (newData) {
+  saveQuotes();         // Update localStorage
+  populateCategories(); // Refresh category dropdown
+  filterQuotes();       // Show filtered quote
+
+  // Show UI notification with the exact required message
+  const notif = document.getElementById("syncNotification");
+  notif.textContent = "Quotes synced with server!";  // <--- this line
+  notif.style.display = "block"; // Make it visible
+  setTimeout(() => notif.style.display = "none", 3000); // Hide after 3 seconds
+}
+
 
   // Always post local data to server (simulate sending updates)
   await postQuotesToServer();
