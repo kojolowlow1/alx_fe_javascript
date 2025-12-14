@@ -65,6 +65,35 @@ function addQuote() {
     document.getElementById("newQuoteCategory").value = "";
   }
 }
+// Export quotes to JSON file
+function exportToJsonFile() {
+  const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Attach export event
+document.getElementById("exportQuotes").addEventListener("click", exportToJsonFile);
+
+// Import quotes from JSON file
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function(e) {
+    const importedQuotes = JSON.parse(e.target.result);
+    quotes.push(...importedQuotes);  // add to existing quotes
+    saveQuotes();  // update localStorage
+    alert("Quotes imported successfully!");
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
+// Attach import event
+document.getElementById("importFile").addEventListener("change", importFromJsonFile);
+
 
 // Event listener for “Show New Quote” button
 document.getElementById("newQuote")
