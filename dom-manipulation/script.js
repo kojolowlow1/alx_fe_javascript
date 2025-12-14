@@ -232,14 +232,16 @@ async function syncQuotes() {
   });
 
   if (newData) {
-    saveQuotes(); // Update localStorage
-    populateCategories(); // Refresh category filter
-    filterQuotes();      // Show initial filtered quote
-    // Show notification
-    const notif = document.getElementById("syncNotification");
-    notif.style.display = "block";
-    setTimeout(() => notif.style.display = "none", 3000);
-  }
+  saveQuotes();         // Update localStorage
+  populateCategories(); // Refresh category dropdown
+  filterQuotes();       // Show filtered quote
+
+  // Show UI notification
+  const notif = document.getElementById("syncNotification");
+  notif.style.display = "block"; // Make it visible
+  setTimeout(() => notif.style.display = "none", 3000); // Hide after 3s
+}
+
 }
 
 // Periodically sync with server every 30 seconds
