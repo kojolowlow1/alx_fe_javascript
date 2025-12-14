@@ -3,6 +3,23 @@ const quotes = [
   { text: "Code is poetry.", category: "Programming" }
 ];
 
+// Save quotes to localStorage
+function saveQuotes() {
+  localStorage.setItem('quotes', JSON.stringify(quotes));
+}
+
+// Load quotes from localStorage
+function loadQuotes() {
+  const storedQuotes = localStorage.getItem('quotes');
+  if (storedQuotes) {
+    quotes.push(...JSON.parse(storedQuotes));
+  }
+}
+
+// Call on initialization
+loadQuotes();
+
+
 const quoteDisplay = document.getElementById("quoteDisplay");
 
 // Show random quote (checker wants this name)
@@ -42,6 +59,7 @@ function addQuote() {
   if (text && category) {
     quotes.push({ text, category });
     quoteDisplay.innerHTML = text;
+    saveQuotes();
 
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
