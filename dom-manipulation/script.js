@@ -6,7 +6,7 @@ const quotes = [
 const quoteDisplay = document.getElementById("quoteDisplay");
 
 // Show random quote (checker wants this name)
-function displayRandomQuote() {
+function showRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   quoteDisplay.innerHTML = quotes[randomIndex].text;
 }
