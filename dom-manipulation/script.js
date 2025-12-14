@@ -127,6 +127,74 @@ function exportToJsonFile() {
   a.click();
   URL.revokeObjectURL(url);
 }
+// Simulate fetching quotes from a server (mock API)
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const data = await response.json();
+
+    // Convert server data to quote objects (demo purposes)
+    const serverQuotes = data.slice(0, 5).map(item => ({
+      text: item.title,
+      category: "Server"
+    }));
+
+    return serverQuotes;
+  } catch (error) {
+    console.error("Error fetching quotes from server:", error);
+    return [];
+  }
+}
+
+// Simulate posting local quotes to the server (mock API)
+async function postQuotesToServer() {
+  try {
+    await fetch('https://jsonplaceholder.typicode.com/posts', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(quotes)
+    });
+    console.log("Local quotes posted to server successfully!");
+  } catch (error) {
+    console.error("Error posting quotes to server:", error);
+  }
+}
+
+// Sync local quotes with server quotes
+async function syncQuotes() {
+  const serverQuotes = await fetchQuotesFromServer();
+  let newData = false;
+
+  // Conflict resolution: server data takes precedence
+  serverQuotes.forEach(serverQuote => {
+    const exists = quotes.some(localQuote => localQuote.text === serverQuote.text);
+    if (!exists) {
+      quotes.push(serverQuote);
+      newData = true;
+    }
+  });
+
+  if (newData) {
+    saveQuotes();         // Update localStorage
+    populateCategories(); // Refresh category dropdown
+    filterQuotes();       // Show filtered quote
+    const notif = document.getElementById("syncNotification");
+    notif.style.display = "block"; // Show notification
+    setTimeout(() => notif.style.display = "none", 3000);
+  }
+
+  // Always post local data to server (simulate sending updates)
+  await postQuotesToServer();
+}
+
+// Periodically sync with server every 30 seconds
+setInterval(syncQuotes, 30000); // 30000ms = 30s
+
+// Initial sync on page load
+syncQuotes();
+
 
 // Simulate fetching quotes from a server (using mock API)
 async function fetchQuotesFromServer() {
