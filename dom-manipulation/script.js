@@ -128,6 +128,58 @@ function exportToJsonFile() {
   URL.revokeObjectURL(url);
 }
 
+// Simulate fetching quotes from a server (using mock API)
+async function fetchQuotesFromServer() {
+  try {
+    // Using JSONPlaceholder or any mock API for simulation
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const data = await response.json();
+
+    // Convert server data to quote objects (for demo purposes)
+    // Only take first 5 items to simulate server quotes
+    const serverQuotes = data.slice(0, 5).map(item => ({
+      text: item.title,
+      category: "Server"
+    }));
+
+    return serverQuotes;
+  } catch (error) {
+    console.error("Error fetching quotes from server:", error);
+    return [];
+  }
+}
+
+// Sync local quotes with server quotes
+async function syncQuotes() {
+  const serverQuotes = await fetchQuotesFromServer();
+
+  // Conflict resolution: server data takes precedence
+  let newData = false;
+  serverQuotes.forEach(serverQuote => {
+    const exists = quotes.some(localQuote => localQuote.text === serverQuote.text);
+    if (!exists) {
+      quotes.push(serverQuote);
+      newData = true;
+    }
+  });
+
+  if (newData) {
+    saveQuotes(); // Update localStorage
+    populateCategories(); // Refresh category filter
+    filterQuotes();      // Show initial filtered quote
+    // Show notification
+    const notif = document.getElementById("syncNotification");
+    notif.style.display = "block";
+    setTimeout(() => notif.style.display = "none", 3000);
+  }
+}
+
+// Periodically sync with server every 30 seconds
+setInterval(syncQuotes, 30000); // 30000ms = 30s
+
+// Initial sync on page load
+syncQuotes();
+
 // Import quotes from JSON file
 function importFromJsonFile(event) {
   const fileReader = new FileReader();
